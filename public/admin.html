@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RingRaceViewer Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>body { overflow: auto; }</style>
+</head>
+<body class="admin">
+
+  <!-- Header -->
+  <header class="admin-header">
+    <img id="header-logo" class="logo" src="" alt="" style="display:none">
+    <h1>Ring<span>Race</span>Viewer</h1>
+
+    <div class="header-controls">
+      <div class="status-dot" id="status-dot" title="Connected"></div>
+
+      <select id="layout-select" class="btn"></select>
+      <button class="btn btn-sm" id="btn-new-layout" title="New Layout">+ Layout</button>
+      <button class="btn btn-sm" id="btn-delete-layout" title="Delete Layout">&#128465;</button>
+      <button class="btn btn-primary" id="btn-save">Save</button>
+      <button class="btn btn-accent" id="btn-activate">Go Live</button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- Sources -->
+    <div class="sidebar-section">
+      <h2>Sources</h2>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-sm" id="btn-add-youtube">+ YouTube</button>
+        <button class="btn btn-sm" id="btn-add-webpage">+ Webpage</button>
+      </div>
+    </div>
+    <div class="source-list" id="source-list"></div>
+
+    <!-- Theme -->
+    <div class="sidebar-section" style="border-top:1px solid var(--border);">
+      <h2>Theme</h2>
+      <div class="color-row">
+        <label>Primary</label>
+        <input type="color" data-theme="primaryColor" value="#e10600">
+      </div>
+      <div class="color-row">
+        <label>Accent</label>
+        <input type="color" data-theme="accentColor" value="#ff6b35">
+      </div>
+      <div class="color-row">
+        <label>Background</label>
+        <input type="color" data-theme="backgroundColor" value="#0a0a0f">
+      </div>
+      <div class="color-row">
+        <label>Surface</label>
+        <input type="color" data-theme="surfaceColor" value="#141420">
+      </div>
+      <div class="color-row">
+        <label>Text</label>
+        <input type="color" data-theme="textColor" value="#e0e0e0">
+      </div>
+      <button class="btn btn-sm" id="btn-save-theme" style="margin-top:8px; width:100%;">Apply Theme</button>
+    </div>
+
+    <!-- Logo -->
+    <div class="sidebar-section">
+      <h2>Logo</h2>
+      <label class="logo-upload-area" id="logo-upload">
+        <img id="logo-preview" src="" alt="" style="display:none">
+        <span>Click to upload logo</span>
+        <input type="file" accept="image/*" style="display:none" id="logo-input">
+      </label>
+    </div>
+
+    <!-- Bluetooth Speakers -->
+    <div class="sidebar-section" id="bt-section" style="border-top:1px solid var(--border);">
+      <h2>&#128264; Speakers</h2>
+
+      <div id="bt-unavailable" style="display:none;">
+        <div class="bt-empty">Bluetooth not available.<br><small>Install bluez and run on host.</small></div>
+      </div>
+
+      <div id="bt-content">
+        <!-- Paired -->
+        <div class="bt-label">Paired Devices</div>
+        <div id="bt-paired-list"></div>
+
+        <!-- Scanned -->
+        <div class="bt-label" style="margin-top:12px;">Nearby Devices</div>
+        <div id="bt-scanned-list"></div>
+
+        <!-- Controls -->
+        <div class="bt-controls">
+          <button class="btn btn-sm" id="btn-bt-scan">Scan</button>
+          <button class="btn btn-sm btn-primary" id="btn-bt-combine" disabled>Combine Speakers</button>
+          <button class="btn btn-sm" id="btn-bt-uncombine" style="display:none;">Remove Combined</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tip -->
+    <div class="sidebar-footer">
+      <a href="https://paypal.me/stikkx" target="_blank" rel="noopener" class="tip-link">&#127866; Tip me a beer</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="displays-header">
+      <button class="btn btn-sm btn-primary" id="btn-add-display">+ Add Display</button>
+    </div>
+    <div id="displays-container"></div>
+  </main>
+
+  <!-- Source Modal -->
+  <div class="modal-backdrop" id="source-modal">
+    <div class="modal">
+      <h3 id="modal-title">Add Source</h3>
+      <input type="hidden" id="modal-source-id">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="modal-source-title" placeholder="e.g. Onboard #3 Manthey">
+      </div>
+      <div class="form-group" id="modal-videoid-group">
+        <label>YouTube Video ID</label>
+        <input type="text" id="modal-source-videoid" placeholder="e.g. dQw4w9WgXcQ">
+      </div>
+      <div class="form-group" id="modal-url-group" style="display:none">
+        <label>URL</label>
+        <input type="url" id="modal-source-url" placeholder="https://live-timing.nuerburgring.de">
+      </div>
+      <input type="hidden" id="modal-source-type" value="youtube">
+      <div class="modal-actions">
+        <button class="btn" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout Name Modal -->
+  <div class="modal-backdrop" id="layout-modal">
+    <div class="modal">
+      <h3>New Layout</h3>
+      <div class="form-group">
+        <label>Layout Name</label>
+        <input type="text" id="layout-name-input" placeholder="e.g. Race Day Setup">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="btn-layout-cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-layout-create">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/bluetooth.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# RingRaceViewer — Docker Compose Override for Bluetooth Support
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.bluetooth.yml up -d
+#
+# This override gives the app container access to the host's:
+#   - Bluetooth adapter (via /dev bus and D-Bus)
+#   - PulseAudio / PipeWire audio (via socket mount)
+#
+# Prerequisites on the host:
+#   - bluez installed and bluetooth service running
+#   - PipeWire or PulseAudio running for the user
+#   - The PulseAudio/PipeWire socket must be accessible
+
+services:
+  app:
+    # Required for bluetoothctl and pactl access
+    network_mode: host
+    privileged: true
+    volumes:
+      - ./data:/app/data
+      - ./public/assets:/app/public/assets
+      # D-Bus system bus (needed for bluetoothctl)
+      - /var/run/dbus:/var/run/dbus
+      # PulseAudio / PipeWire socket (for pactl)
+      - /run/user/1000/pulse:/run/user/1000/pulse
+      - /run/user/1000/pipewire-0:/run/user/1000/pipewire-0
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - XDG_RUNTIME_DIR=/run/user/1000
+    # Override ports since network_mode: host makes port mapping unnecessary
+    ports: !reset []

@@ -1,0 +1,49 @@
+# RingRaceViewer — Docker Compose
+# Includes the app + Nginx Proxy Manager for DNS/SSL (Let's Encrypt)
+#
+# Usage:
+#   1. cp .env.example .env  (edit DOMAIN)
+#   2. docker compose up -d
+#   3. Open http://<server-ip>:81 to configure Nginx Proxy Manager
+#      Default login: admin@example.com / changeme
+#   4. In NPM: Add Proxy Host
+#      - Domain: your-domain.com
+#      - Forward Hostname: app
+#      - Forward Port: 3000
+#      - SSL tab → Request Let's Encrypt certificate
+#   5. Point your DNS A record to the server's public IP
+
+services:
+  app:
+    build: .
+    container_name: ringraceviewer-app
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./public/assets:/app/public/assets
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - internal
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: ringraceviewer-npm
+    restart: unless-stopped
+    ports:
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+      - "81:81"     # NPM Admin UI
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  npm_data:
+  npm_letsencrypt:
