@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 const DB_PATH = path.join(__dirname, 'data', 'db.json');
 
 // --- JSON File Database ---
@@ -64,6 +64,9 @@ app.use((_req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Short URL redirects
+app.get('/admin', (_req, res) => res.redirect('/admin.html'));
 
 // --- API: Sources ---
 
@@ -177,8 +180,8 @@ app.post('/api/displays', (req, res) => {
 
 app.put('/api/displays/:num', (req, res) => {
   const db = readDB();
+  if (!db.displays) db.displays = {};
   const num = req.params.num;
-  if (!db.displays || !db.displays[num]) return res.status(404).json({ error: 'Display not found' });
   const width = Math.max(640, Math.min(7680, parseInt(req.body.width) || 1920));
   const height = Math.max(480, Math.min(4320, parseInt(req.body.height) || 1080));
   db.displays[num] = { width, height };
@@ -228,10 +231,87 @@ app.post('/api/logo', express.raw({ type: 'image/*', limit: '2mb' }), (req, res)
   res.json({ logoUrl: db.theme.logoUrl });
 });
 
+// --- API: Audio (unmute one source at a time) ---
+
+let audioSourceId = null;
+
+app.get('/api/audio', (_req, res) => {
+  res.json({ sourceId: audioSourceId });
+});
+
+app.put('/api/audio', (req, res) => {
+  audioSourceId = req.body.sourceId || null;
+  io.emit('audio:changed', { sourceId: audioSourceId });
+  res.json({ sourceId: audioSourceId });
+});
+
+// --- API: Extension toggle ---
+
+let extensionEnabled = true;
+
+app.get('/api/extension', (_req, res) => {
+  res.json({ enabled: extensionEnabled });
+});
+
+app.put('/api/extension', (req, res) => {
+  extensionEnabled = !!req.body.enabled;
+  io.emit('extension:changed', { enabled: extensionEnabled });
+  res.json({ enabled: extensionEnabled });
+});
+
+// --- API: Messages (broadcast notifications to displays) ---
+
+app.post('/api/messages', (req, res) => {
+  const { text, duration } = req.body;
+  if (!text || !text.trim()) return res.status(400).json({ error: 'Text is required' });
+  const message = {
+    id: genId(),
+    text: text.trim(),
+    duration: Math.max(5, Math.min(300, parseInt(duration) || 30)),
+    timestamp: Date.now()
+  };
+  io.emit('message:broadcast', message);
+  res.status(201).json(message);
+});
+
+// --- API: Kiosk resync (re-detect monitors + restart Chromium) ---
+
+app.post('/api/kiosk/resync', (_req, res) => {
+  const { exec } = require('child_process');
+  const user = process.env.SUDO_USER || process.env.USER || 'root';
+  const kioskScript = `/home/${user}/.local/bin/ringraceviewer-kiosk.sh`;
+
+  // Check if kiosk script exists
+  if (!fs.existsSync(kioskScript)) {
+    return res.status(404).json({ error: 'Kiosk script not found. Run the install script first.' });
+  }
+
+  // Run the kiosk script with X11 display access
+  const env = { ...process.env, DISPLAY: ':0' };
+  exec(`bash "${kioskScript}"`, { env, timeout: 30000 }, (err, stdout, stderr) => {
+    if (err) {
+      console.log(`Kiosk resync error: ${err.message}`);
+      return res.status(500).json({ error: err.message, stderr });
+    }
+    console.log(`Kiosk resync:\n${stdout}`);
+    res.json({ status: 'ok', output: stdout });
+  });
+});
+
 // --- Bluetooth (optional add-on) ---
 
 const bluetooth = require('./bluetooth');
 app.use('/api/bluetooth', bluetooth.createRouter(io));
+
+// --- Live Timing ---
+
+try {
+  const livetiming = require('./livetiming');
+  app.use('/api/timing', livetiming.createTimingClient(io));
+  console.log('  Timing: module loaded');
+} catch (e) {
+  console.log('  Timing: not available (ws not installed)');
+}
 
 // --- WebSocket ---
 
@@ -242,10 +322,46 @@ io.on('connection', (socket) => {
   });
 });
 
+// --- mDNS (rrv.local) ---
+
+const MDNS_NAME = process.env.MDNS_NAME || 'rrv';
+
+try {
+  const mdns = require('multicast-dns')();
+  const os = require('os');
+
+  function getLocalIPs() {
+    const ips = [];
+    const ifaces = os.networkInterfaces();
+    for (const name of Object.keys(ifaces)) {
+      for (const iface of ifaces[name]) {
+        if (!iface.internal && iface.family === 'IPv4') ips.push(iface.address);
+      }
+    }
+    return ips;
+  }
+
+  mdns.on('query', (query) => {
+    const fullName = `${MDNS_NAME}.local`;
+    for (const q of query.questions) {
+      if (q.name === fullName && (q.type === 'A' || q.type === 'ANY')) {
+        const ips = getLocalIPs();
+        mdns.respond({
+          answers: ips.map(ip => ({ name: fullName, type: 'A', ttl: 120, data: ip })),
+        });
+      }
+    }
+  });
+
+  console.log(`  mDNS:  ${MDNS_NAME}.local`);
+} catch (e) {
+  console.log('  mDNS:  not available (multicast-dns not installed)');
+}
+
 // --- Start ---
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n  🏎️  RingRaceViewer running on port ${PORT}`);
-  console.log(`     Dashboard: http://localhost:${PORT}`);
-  console.log(`     Admin:     http://localhost:${PORT}/admin.html\n`);
+  console.log(`     Dashboard: http://${MDNS_NAME}.local:${PORT}`);
+  console.log(`     Admin:     http://${MDNS_NAME}.local:${PORT}/admin\n`);
 });

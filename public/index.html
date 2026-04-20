@@ -4,16 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RingRaceViewer</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack.min.css">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="dashboard">
 
-  <div id="grid" class="grid-stack"></div>
+  <!-- Splash screen — shown for 5 seconds on boot -->
+  <div id="splash" class="splash">
+    <div class="splash-text">
+      <span class="splash-ring">Ring</span><span class="splash-race">Race</span><span class="splash-viewer">Viewer</span>
+    </div>
+  </div>
+
+  <div id="grid" class="dashboard-grid" style="display:none;"></div>
 
   <img id="dashboard-logo" class="dashboard-logo" src="" alt="" style="display:none">
 
-  <script src="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack-all.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/dashboard.js"></script>
 </body>

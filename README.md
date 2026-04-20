@@ -1,6 +1,15 @@
-# RingRaceViewer
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/assets/logo.svg">
+    <img src="public/assets/logo.svg" alt="RingRaceViewer" width="480">
+  </picture>
+</p>
 
-A real-time, remote-controlled multi-display dashboard built for endurance racing events like the Nurburgring 24h. Run it on an Ubuntu thin client, control it from your tablet, and display YouTube onboard streams and live timing pages on big screens in the paddock.
+<p align="center">
+  A real-time, remote-controlled multi-display dashboard for endurance racing events like the Nurburgring 24h.
+  <br>
+  Run it on an Ubuntu thin client, control it from your tablet, and show YouTube onboard streams and live timing on big screens in the paddock.
+</p>
 
 ---
 
@@ -9,21 +18,34 @@ A real-time, remote-controlled multi-display dashboard built for endurance racin
 ### Dashboard Display (`/`)
 - Full-screen kiosk view designed for large monitors
 - Renders YouTube streams and web pages as iframes in a configurable grid
-- Supports **two independent displays** — each monitor loads `/?display=1` or `/?display=2`
+- **Unlimited displays** — start with one, add more from the admin panel. Each monitor loads `/?display=N`
 - Updates instantly via WebSocket when the layout changes — no manual refresh needed
-- Optional logo watermark in the corner
+- Splash screen on boot with automatic fade to layout
+- Idle screen (logo) when no content is assigned
+- Screen wake lock prevents the display from sleeping
+- Auto-hides cursor after 2 seconds
 
-### Admin Panel (`/admin.html`)
+### Admin Panel (`/admin`)
 - **Tablet-friendly** control interface — dark mode, touch-optimized, works on any device in the same network
 - **Source Management** — add YouTube streams (just paste the video ID) or any web page URL. Edit or delete sources on the fly
-- **Grid Layout Editor** — two Gridstack.js grids representing Display 1 and Display 2. Click a source to add it to Display 1, double-click for Display 2. Drag and resize widgets freely
-- **Multiple Layouts** — create, save, and switch between different layout presets (e.g. "Qualifying", "Race Day", "Night Setup")
+- **Dynamic Displays** — add or remove displays from the admin UI. Each display shows its URL (`/?display=N`) for easy kiosk setup
+- **Layout Presets** — one-click arrangements:
+  - **Full** — single source fills the entire screen
+  - **2H** — two sources side by side (50/50)
+  - **2V** — two sources stacked top/bottom
+  - **2x2** — four equal quadrants
+  - **2+1** — two on top, one full-width below
+  - **1+2** — one full-width on top, two below
+  - **Race** — big main video + two small below + timing sidebar
+  - **Focus** — one large left, two small stacked on the right
+  - **3Col** — three equal columns
+- **Auto Layout** — automatically picks the best preset based on the number of sources
+- **Multiple Layouts** — create, save, and switch between different layout setups (e.g. "Qualifying", "Race Day", "Night Setup")
 - **Go Live** — one button push activates the layout on all connected displays in real-time
-- **Configurable Display Resolution** — set the exact width and height per display. The admin grid preview matches the real aspect ratio so what you see is what you get
-- **Theme Editor** — change all colors (primary, accent, background, surface, text) with live color pickers. Changes push to all displays instantly
-- **Logo Upload** — upload your team or event logo. It appears in the admin header and as a watermark on the dashboard
+- **Configurable Display Resolution** — set the exact width and height per display. The admin grid preview matches the real aspect ratio
 - **Bluetooth Speaker Management** — scan, pair, connect, and combine multiple Bluetooth speakers for audio output (see below)
 - **Keyboard shortcut** — `Ctrl+S` to save the current layout
+- **Responsive** — works on mobile phones and tablets
 
 ### Bluetooth Multi-Speaker Support
 - Manage Bluetooth speakers directly from the admin panel sidebar
@@ -36,6 +58,24 @@ A real-time, remote-controlled multi-display dashboard built for endurance racin
 - All data (sources, layouts, theme, display config) is stored in a single JSON file (`data/db.json`)
 - Survives reboots and power outages — no database server needed
 
+### mDNS / Local Network
+- The server announces itself as **`rrv.local`** on the local network via mDNS
+- No IP address needed — just open `http://rrv.local/admin` from any device in the same network
+- Custom hostname via `MDNS_NAME=myname` environment variable (becomes `myname.local`)
+
+### Kiosk Mode
+- Auto-detects all connected monitors via `xrandr`
+- Opens a Chromium app window on each monitor with the correct display URL
+- Forces X11 (disables Wayland) for reliable window positioning
+- GNOME dark mode for clean dark title bars
+- Hides GNOME dock/panel for a clean look
+- Disables screen blanking and power management
+- Auto-login via GDM
+
+### Boot Logo
+- Custom **RingRaceViewer** Plymouth boot logo (replaces the Ubuntu logo on startup)
+- Skip with `--no-bootlogo` flag during install
+
 ### SSL / DNS (Nginx Proxy Manager)
 - Docker Compose includes [Nginx Proxy Manager](https://nginxproxymanager.com/) for easy SSL setup
 - Point your domain's DNS A record to the server, then configure the proxy host and request a free Let's Encrypt certificate — all through a web UI on port 81
@@ -44,66 +84,61 @@ A real-time, remote-controlled multi-display dashboard built for endurance racin
 
 ## Quick Start
 
-### Option 1: Run directly on the host (recommended for Bluetooth)
+### One-Line Install (Ubuntu)
 
 ```bash
-# Install Node.js (Ubuntu/Debian)
-sudo apt install nodejs npm
+curl -sSL https://raw.githubusercontent.com/stikkx/RingRaceViewer/main/scripts/install.sh | sudo bash
+```
 
-# Or on Arch/CachyOS
-sudo pacman -S nodejs npm
+Installs Node.js 24 (via nvm), clones the repo, creates a systemd service, sets up kiosk mode, and installs the boot logo. After install:
+- **Dashboard:** `http://rrv.local/?display=1`
+- **Admin Panel:** `http://rrv.local/admin`
 
-# Install dependencies
+Flags:
+- `--no-kiosk` — skip kiosk mode setup
+- `--no-bootlogo` — skip boot logo install
+
+### Manual Install
+
+```bash
+git clone https://github.com/stikkx/RingRaceViewer.git
 cd RingRaceViewer
 npm install
-
-# Start
 node server.js
 ```
 
-Open in your browser:
-- **Dashboard:** `http://localhost:3000/?display=1`
-- **Admin Panel:** `http://localhost:3000/admin.html`
-
-### Option 2: Docker (no Bluetooth)
+### Docker (no Bluetooth)
 
 ```bash
 docker compose up -d
 ```
 
-- **Dashboard:** `http://localhost:3000`
-- **Admin Panel:** `http://localhost:3000/admin.html`
+- **Dashboard:** `http://rrv.local`
+- **Admin Panel:** `http://rrv.local/admin`
 - **Nginx Proxy Manager:** `http://localhost:81` (default login: `admin@example.com` / `changeme`)
 
-### Option 3: Docker with Bluetooth
+### Docker with Bluetooth
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.bluetooth.yml up -d
 ```
 
-This gives the container access to the host's Bluetooth adapter and audio system. Requires `bluez` and PipeWire/PulseAudio running on the host.
+Gives the container access to the host's Bluetooth adapter and audio system. Requires `bluez` and PipeWire/PulseAudio running on the host.
 
 ---
 
-## Kiosk Mode Setup (Ubuntu Thin Client)
-
-The included setup script configures auto-login and launches Chromium in kiosk mode on both monitors at boot:
+## Managing the Service
 
 ```bash
-sudo bash scripts/kiosk-setup.sh http://localhost:3000
+sudo systemctl start ringraceviewer      # start
+sudo systemctl stop ringraceviewer       # stop
+sudo systemctl restart ringraceviewer    # restart
+sudo journalctl -u ringraceviewer -f     # live logs
 ```
 
-This will:
-1. Install Chromium and `unclutter` (auto-hides the mouse cursor)
-2. Configure GDM auto-login
-3. Create an autostart entry that launches two Chromium instances:
-   - Monitor 1: `http://localhost:3000/?display=1` at position `0,0`
-   - Monitor 2: `http://localhost:3000/?display=2` at position `1920,0`
-
-To test immediately without rebooting:
-
+**Update to latest version:**
 ```bash
-bash ~/.local/bin/ringraceviewer-kiosk.sh
+cd /opt/ringraceviewer && sudo git pull && sudo npm install && sudo systemctl restart ringraceviewer
 ```
 
 ---
@@ -113,11 +148,11 @@ bash ~/.local/bin/ringraceviewer-kiosk.sh
 1. Make sure your domain (e.g. `race.yourdomain.com`) has a DNS **A record** pointing to your server's public IP
 2. Start the stack: `docker compose up -d`
 3. Open `http://<server-ip>:81` and log in (default: `admin@example.com` / `changeme`)
-4. Go to **Proxy Hosts** → **Add Proxy Host**:
+4. Go to **Proxy Hosts** -> **Add Proxy Host**:
    - **Domain:** `race.yourdomain.com`
    - **Forward Hostname:** `app`
-   - **Forward Port:** `3000`
-5. Go to the **SSL** tab → check **Request a new SSL Certificate** → enable **Force SSL**
+   - **Forward Port:** `80`
+5. Go to the **SSL** tab -> check **Request a new SSL Certificate** -> enable **Force SSL**
 6. Save — done. Your dashboard is now available over HTTPS
 
 ---
@@ -139,15 +174,21 @@ RingRaceViewer/
 ├── public/
 │   ├── index.html                  # Dashboard (kiosk display)
 │   ├── admin.html                  # Admin panel (tablet control)
-│   ├── assets/                     # Uploaded logos
+│   ├── assets/                     # Logo and uploaded files
+│   │   └── logo.svg
 │   ├── css/
 │   │   └── style.css               # Full design system (CSS custom properties)
 │   └── js/
 │       ├── dashboard.js            # Dashboard logic + WebSocket client
-│       ├── admin.js                # Admin panel logic
+│       ├── admin.js                # Admin panel logic (pure CSS Grid)
 │       └── bluetooth.js            # Bluetooth speaker UI module
 └── scripts/
-    └── kiosk-setup.sh              # Ubuntu kiosk auto-setup
+    ├── install.sh                  # One-line Ubuntu install script
+    ├── install-bootlogo.sh         # Plymouth boot logo installer
+    ├── kiosk-setup.sh              # Standalone kiosk mode setup
+    └── plymouth/                   # Plymouth theme files
+        ├── ringraceviewer.plymouth
+        └── ringraceviewer.script
 ```
 
 ---
@@ -175,8 +216,10 @@ RingRaceViewer/
 ### Displays
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/displays` | Get display configurations |
-| `PUT` | `/api/displays/:num` | Set display resolution (`{ width, height }`) |
+| `GET` | `/api/displays` | Get all display configurations |
+| `POST` | `/api/displays` | Add a new display (`{ width, height }`) |
+| `PUT` | `/api/displays/:num` | Update display resolution (`{ width, height }`) |
+| `DELETE` | `/api/displays/:num` | Remove a display |
 
 ### Theme
 | Method | Endpoint | Description |
@@ -184,6 +227,30 @@ RingRaceViewer/
 | `GET` | `/api/theme` | Get current theme |
 | `PUT` | `/api/theme` | Update theme colors |
 | `POST` | `/api/logo` | Upload a logo image (binary body, `Content-Type: image/*`) |
+
+### Audio
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/audio` | Get current audio source ID |
+| `PUT` | `/api/audio` | Set audio source (`{ sourceId }` or `{ sourceId: null }` to mute) |
+
+### Messages
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/messages` | Broadcast a popup to all displays (`{ text, duration }`) |
+
+### Live Timing (optional)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/timing/status` | Connection status |
+| `POST` | `/api/timing/connect` | Connect to timing WebSocket (`{ url }`) |
+| `POST` | `/api/timing/disconnect` | Disconnect from timing |
+| `POST` | `/api/timing/test` | Run test with sample N24h data |
+
+### Kiosk
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/kiosk/resync` | Re-detect monitors and restart Chromium kiosk |
 
 ### Bluetooth (optional)
 | Method | Endpoint | Description |
@@ -202,20 +269,24 @@ RingRaceViewer/
 ### WebSocket Events
 | Event | Direction | Description |
 |-------|-----------|-------------|
-| `layout:activated` | Server → Client | Active layout changed |
-| `layout:updated` | Server → Client | Current active layout was modified |
-| `layouts:changed` | Server → Client | Layout list changed |
-| `sources:changed` | Server → Client | Source list changed |
-| `theme:changed` | Server → Client | Theme updated |
-| `displays:changed` | Server → Client | Display config changed |
-| `bluetooth:changed` | Server → Client | Bluetooth state changed |
+| `layout:activated` | Server -> Client | Active layout changed |
+| `layout:updated` | Server -> Client | Current active layout was modified |
+| `layouts:changed` | Server -> Client | Layout list changed |
+| `sources:changed` | Server -> Client | Source list changed |
+| `theme:changed` | Server -> Client | Theme updated |
+| `displays:changed` | Server -> Client | Display config changed |
+| `audio:changed` | Server -> Client | Audio source changed |
+| `message:broadcast` | Server -> Client | Popup notification |
+| `timing:update` | Server -> Client | Live timing leaderboard data |
+| `timing:status` | Server -> Client | Timing connection status |
+| `bluetooth:changed` | Server -> Client | Bluetooth state changed |
 
 ---
 
 ## Tech Stack
 
-- **Backend:** Node.js, Express, Socket.io
-- **Frontend:** Vanilla HTML/CSS/JS, Gridstack.js (CDN)
+- **Backend:** Node.js 24, Express, Socket.io
+- **Frontend:** Vanilla HTML/CSS/JS, CSS Grid
 - **Storage:** JSON file (zero-dependency)
 - **Bluetooth:** bluetoothctl (bluez), pactl (PipeWire/PulseAudio)
 - **SSL:** Nginx Proxy Manager + Let's Encrypt
@@ -229,8 +300,113 @@ RingRaceViewer/
 - **Save multiple layouts** — pre-build setups for qualifying, race start, night stint, etc.
 - **Dark mode by default** — easy on the eyes during night stints in the paddock
 - **Ctrl+S** saves the layout from the admin panel
-- Click a source card to add it to Display 1, double-click for Display 2
+- Use the **Race** preset for a main view + timing sidebar
 - The dashboard auto-reconnects if the server restarts
+
+---
+
+## Development / Debug
+
+### Install Node.js via nvm (Arch / CachyOS / Manjaro)
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+nvm install 24
+nvm use 24
+```
+
+### Run locally
+
+```bash
+git clone https://github.com/stikkx/RingRaceViewer.git
+cd RingRaceViewer
+npm install
+node server.js
+```
+
+Open `http://localhost` (port 80) or set a custom port with `PORT=3000 node server.js`.
+
+### Run with file watcher (auto-restart on changes)
+
+```bash
+npm run dev
+```
+
+### Run via Docker (quick test)
+
+```bash
+docker build -t rrv . && docker run --rm -p 3000:80 -v ./data:/app/data rrv
+```
+
+Open `http://localhost:3000/admin`.
+
+### Test Bluetooth (without speakers)
+
+```bash
+# Check if Bluetooth adapter is available
+bluetoothctl show
+
+# Start Bluetooth service if needed
+sudo systemctl start bluetooth
+
+# Test API endpoints
+curl http://localhost/api/bluetooth/status
+curl -X POST http://localhost/api/bluetooth/scan -H "Content-Type: application/json" -d '{"duration":5}'
+```
+
+If Bluetooth is not available, the admin panel shows "Bluetooth not available" gracefully.
+
+### Test Live Timing
+
+Open the admin panel, scroll to **Live Timing**, and click **Test**. This sends sample N24h race data through the notification pipeline:
+- **2s** — Initial leaderboard loaded
+- **2s** — New fastest lap popup
+- **5s** — Lead change popup
+- **8s** — Best sector popup
+
+Watch the dashboard (`/?display=1`) for popup notifications.
+
+### Test Audio
+
+1. Add a YouTube source and assign it to a display
+2. Click the speaker icon on the source card in the admin sidebar
+3. The dashboard unmutes that stream (all others stay muted)
+4. Click again to mute
+
+### Useful API calls for debugging
+
+```bash
+# List all sources
+curl http://localhost/api/sources
+
+# List all layouts
+curl http://localhost/api/layouts
+
+# List displays
+curl http://localhost/api/displays
+
+# Current audio source
+curl http://localhost/api/audio
+
+# Send a message to all displays
+curl -X POST http://localhost/api/messages \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Hello from the paddock!","duration":30}'
+
+# Resync kiosk monitors
+curl -X POST http://localhost/api/kiosk/resync
+```
+
+### Logs
+
+```bash
+# Server logs (systemd)
+sudo journalctl -u ringraceviewer -f
+
+# Docker logs
+docker logs -f ringraceviewer-app
+```
 
 ---
 

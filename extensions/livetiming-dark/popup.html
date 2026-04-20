@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="tailwind.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'racing-green': '#22c55e',
+                        'racing-blue': '#1e3a8a',
+                        'racing-pink': '#ec4899',
+                        'dark-bg': '#1a1a1a',
+                        'dark-card': '#2d2d2d',
+                        'dark-border': '#444444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #16a34a;
+        }
+        
+        /* Notification animation */
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="w-80 bg-gradient-to-br from-dark-bg to-dark-card text-white font-sans">
+    <!-- Header -->
+    <div class="text-center mb-6 pb-4 border-b-2 border-racing-green">
+        <h1 class="text-xl font-bold text-racing-green mb-1">🏁 LiveTiming</h1>
+        <p class="text-sm text-gray-400">Dark Theme & Lap Alerts</p>
+    </div>
+
+    <!-- Theme Settings -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold text-gray-200 border-l-4 border-racing-green pl-3 mb-3">
+            Theme Settings
+        </h3>
+        <div class="space-y-3">
+            <label class="flex items-center justify-between cursor-pointer group">
+                <span class="text-sm group-hover:text-racing-green transition-colors">Dark Theme</span>
+                <input type="checkbox" id="darkTheme" checked 
+                       class="w-4 h-4 accent-racing-green bg-dark-card border-dark-border rounded">
+            </label>
+            
+            <div>
+                <label class="text-sm text-gray-300 mb-2 block">Theme Style</label>
+                <select id="themeStyle" class="w-full bg-dark-card border border-dark-border rounded px-3 py-2 text-sm focus:border-racing-green focus:outline-none">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                    <option value="racing">Racing Theme</option>
+                    <option value="neon">Neon Theme</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Settings -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold text-gray-200 border-l-4 border-racing-green pl-3 mb-3">
+            Alert Settings
+        </h3>
+        <div class="space-y-3">
+            <label class="flex items-center justify-between cursor-pointer group">
+                <span class="text-sm group-hover:text-racing-green transition-colors">Beep on New Lap Record</span>
+                <input type="checkbox" id="beepOnNewLap" checked 
+                       class="w-4 h-4 accent-racing-green bg-dark-card border-dark-border rounded">
+            </label>
+        </div>
+    </div>
+
+    <!-- Update Settings -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold text-gray-200 border-l-4 border-racing-green pl-3 mb-3">
+            Update Settings
+        </h3>
+        <div class="space-y-3">
+            <div>
+                <label class="text-sm text-gray-300 mb-2 block">Refresh Interval</label>
+                <input type="range" id="refreshInterval" min="1000" max="10000" step="500" value="5000"
+                       class="w-full h-2 bg-dark-border rounded-lg appearance-none cursor-pointer slider">
+                <div class="text-xs text-racing-green text-center mt-2" id="refreshValue">5 seconds</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold text-gray-200 border-l-4 border-racing-green pl-3 mb-3">
+            Notification Settings
+        </h3>
+        <div class="space-y-3">
+            <div>
+                <label class="text-sm text-gray-300 mb-2 block">Notification Timer</label>
+                <input type="range" id="popupTimer" min="3" max="15" step="1" value="5"
+                       class="w-full h-2 bg-dark-border rounded-lg appearance-none cursor-pointer slider">
+                <div class="text-xs text-racing-green text-center mt-2" id="timerValue">5 seconds</div>
+            </div>
+            <label class="flex items-center justify-between cursor-pointer group">
+                <span class="text-sm group-hover:text-racing-green transition-colors">Auto-close Notifications</span>
+                <input type="checkbox" id="autoClosePopup" checked 
+                       class="w-4 h-4 accent-racing-green bg-dark-card border-dark-border rounded">
+            </label>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold text-gray-200 border-l-4 border-racing-green pl-3 mb-3">
+            Quick Actions
+        </h3>
+        <button id="toggleExtension" 
+                class="w-full py-3 bg-racing-green hover:bg-green-600 text-white font-bold rounded-lg transition-colors duration-200 transform hover:scale-105">
+            Enable Extension
+        </button>
+    </div>
+
+    <!-- Status Message -->
+    <div id="status" class="hidden text-center py-3 px-4 rounded-lg text-sm font-medium mb-4"></div>
+
+    <!-- Footer -->
+    <div class="pt-4 border-t border-dark-border text-center">
+        <p class="text-xs text-gray-500">Version 1.0.0 | Made for LiveTiming</p>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html> 

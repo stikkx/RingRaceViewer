@@ -1,0 +1,27 @@
+// RingRaceViewer Plymouth Boot Theme
+// "Ring" white, "Race" red, "Viewer" white on dark background
+
+Window.SetBackgroundTopColor(0.04, 0.04, 0.06);
+Window.SetBackgroundBottomColor(0.02, 0.02, 0.04);
+
+// Create text images (color R, G, B)
+ring   = Image.Text("Ring",   0.88, 0.88, 0.88);
+race   = Image.Text("Race",   0.88, 0.02, 0.00);
+viewer = Image.Text("Viewer", 0.88, 0.88, 0.88);
+
+// Screen center
+sw = Window.GetWidth();
+sh = Window.GetHeight();
+total_w = ring.GetWidth() + race.GetWidth() + viewer.GetWidth();
+x = (sw - total_w) / 2;
+y = (sh - ring.GetHeight()) / 2;
+
+// Place sprites
+s1 = Sprite(ring);
+s1.SetPosition(x, y, 10);
+
+s2 = Sprite(race);
+s2.SetPosition(x + ring.GetWidth(), y, 10);
+
+s3 = Sprite(viewer);
+s3.SetPosition(x + ring.GetWidth() + race.GetWidth(), y, 10);

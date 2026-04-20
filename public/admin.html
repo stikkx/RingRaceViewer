@@ -27,74 +27,90 @@
 
   <!-- Sidebar -->
   <aside class="sidebar">
-    <!-- Sources -->
-    <div class="sidebar-section">
-      <h2>Sources</h2>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-sm" id="btn-add-youtube">+ YouTube</button>
-        <button class="btn btn-sm" id="btn-add-webpage">+ Webpage</button>
-      </div>
-    </div>
-    <div class="source-list" id="source-list"></div>
-
-    <!-- Theme -->
-    <div class="sidebar-section" style="border-top:1px solid var(--border);">
-      <h2>Theme</h2>
-      <div class="color-row">
-        <label>Primary</label>
-        <input type="color" data-theme="primaryColor" value="#e10600">
-      </div>
-      <div class="color-row">
-        <label>Accent</label>
-        <input type="color" data-theme="accentColor" value="#ff6b35">
-      </div>
-      <div class="color-row">
-        <label>Background</label>
-        <input type="color" data-theme="backgroundColor" value="#0a0a0f">
-      </div>
-      <div class="color-row">
-        <label>Surface</label>
-        <input type="color" data-theme="surfaceColor" value="#141420">
-      </div>
-      <div class="color-row">
-        <label>Text</label>
-        <input type="color" data-theme="textColor" value="#e0e0e0">
-      </div>
-      <button class="btn btn-sm" id="btn-save-theme" style="margin-top:8px; width:100%;">Apply Theme</button>
+    <!-- Sidebar Tabs -->
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" data-tab="sources">Sources</button>
+      <button class="sidebar-tab" data-tab="messages">Messages</button>
+      <button class="sidebar-tab" data-tab="tools">Tools</button>
     </div>
 
-    <!-- Logo -->
-    <div class="sidebar-section">
-      <h2>Logo</h2>
-      <label class="logo-upload-area" id="logo-upload">
-        <img id="logo-preview" src="" alt="" style="display:none">
-        <span>Click to upload logo</span>
-        <input type="file" accept="image/*" style="display:none" id="logo-input">
-      </label>
+    <!-- Tab: Sources -->
+    <div class="sidebar-tab-content active" id="tab-sources">
+      <div class="sidebar-section">
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-sm" id="btn-add-youtube">+ YouTube</button>
+          <button class="btn btn-sm" id="btn-add-webpage">+ Webpage</button>
+        </div>
+      </div>
+      <div class="source-list" id="source-list"></div>
     </div>
 
-    <!-- Bluetooth Speakers -->
-    <div class="sidebar-section" id="bt-section" style="border-top:1px solid var(--border);">
-      <h2>&#128264; Speakers</h2>
+    <!-- Tab: Messages -->
+    <div class="sidebar-tab-content" id="tab-messages">
+      <div class="sidebar-section">
+        <h2>Broadcast Message</h2>
+        <div class="form-group" style="margin-bottom:8px;">
+          <textarea id="message-text" rows="3" placeholder="Message to show on all displays..." style="width:100%;resize:vertical;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:8px;color:var(--text);font-family:inherit;font-size:.85rem;"></textarea>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <select id="message-duration" class="btn btn-sm" style="width:auto;">
+            <option value="10">10s</option>
+            <option value="30" selected>30s</option>
+            <option value="60">1 min</option>
+            <option value="120">2 min</option>
+            <option value="300">5 min</option>
+          </select>
+          <button class="btn btn-sm btn-primary" id="btn-send-message" style="flex:1;">Send</button>
+        </div>
+      </div>
+    </div>
 
-      <div id="bt-unavailable" style="display:none;">
-        <div class="bt-empty">Bluetooth not available.<br><small>Install bluez and run on host.</small></div>
+    <!-- Tab: Tools -->
+    <div class="sidebar-tab-content" id="tab-tools">
+      <!-- LiveTiming Extension -->
+      <div class="sidebar-section">
+        <h2>LiveTiming Extension</h2>
+        <label class="toggle-label">
+          <input type="checkbox" id="ext-toggle" checked>
+          Dark theme &amp; lap alerts
+        </label>
       </div>
 
-      <div id="bt-content">
-        <!-- Paired -->
-        <div class="bt-label">Paired Devices</div>
-        <div id="bt-paired-list"></div>
+      <!-- Live Timing -->
+      <div class="sidebar-section" style="border-top:1px solid var(--border);">
+        <h2>Live Timing</h2>
+        <div class="form-group" style="margin-bottom:6px;">
+          <label>WebSocket URL</label>
+          <input type="text" id="timing-url" placeholder="wss://..." style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:6px 8px;color:var(--text);font-size:.8rem;">
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span id="timing-status" style="font-size:.75rem;color:var(--text-dim);">Disconnected</span>
+          <button class="btn btn-sm btn-primary" id="btn-timing-connect" style="margin-left:auto;">Connect</button>
+          <button class="btn btn-sm" id="btn-timing-disconnect" style="display:none;">Stop</button>
+          <button class="btn btn-sm" id="btn-timing-test" title="Test with sample N24h data">Test</button>
+        </div>
+      </div>
 
-        <!-- Scanned -->
-        <div class="bt-label" style="margin-top:12px;">Nearby Devices</div>
-        <div id="bt-scanned-list"></div>
+      <!-- Bluetooth Speakers -->
+      <div class="sidebar-section" id="bt-section" style="border-top:1px solid var(--border);">
+        <h2>Bluetooth Speakers</h2>
 
-        <!-- Controls -->
-        <div class="bt-controls">
-          <button class="btn btn-sm" id="btn-bt-scan">Scan</button>
-          <button class="btn btn-sm btn-primary" id="btn-bt-combine" disabled>Combine Speakers</button>
-          <button class="btn btn-sm" id="btn-bt-uncombine" style="display:none;">Remove Combined</button>
+        <div id="bt-unavailable" style="display:none;">
+          <div class="bt-empty">Bluetooth not available.<br><small>Install bluez and run on host.</small></div>
+        </div>
+
+        <div id="bt-content">
+          <div class="bt-label">Paired Devices</div>
+          <div id="bt-paired-list"></div>
+
+          <div class="bt-label" style="margin-top:12px;">Nearby Devices</div>
+          <div id="bt-scanned-list"></div>
+
+          <div class="bt-controls">
+            <button class="btn btn-sm" id="btn-bt-scan">Scan</button>
+            <button class="btn btn-sm btn-primary" id="btn-bt-combine" disabled>Combine Speakers</button>
+            <button class="btn btn-sm" id="btn-bt-uncombine" style="display:none;">Remove Combined</button>
+          </div>
         </div>
       </div>
     </div>
@@ -108,7 +124,9 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="displays-header">
-      <button class="btn btn-sm btn-primary" id="btn-add-display">+ Add Display</button>
+      <select id="display-select" class="btn btn-sm"></select>
+      <button class="btn btn-sm btn-primary" id="btn-add-display">+ Display</button>
+      <button class="btn btn-sm" id="btn-resync-kiosk" title="Re-detect monitors and restart Chromium kiosk windows">Resync</button>
     </div>
     <div id="displays-container"></div>
   </main>
@@ -129,6 +147,24 @@
       <div class="form-group" id="modal-url-group" style="display:none">
         <label>URL</label>
         <input type="url" id="modal-source-url" placeholder="https://live-timing.nuerburgring.de">
+      </div>
+      <div class="form-group" id="modal-quality-group">
+        <label>Video Quality</label>
+        <select id="modal-source-quality" class="btn" style="width:100%;">
+          <option value="auto">Auto</option>
+          <option value="2160">2160p (4K)</option>
+          <option value="1440">1440p</option>
+          <option value="1080">1080p</option>
+          <option value="720">720p</option>
+          <option value="480">480p</option>
+          <option value="360">360p</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="toggle-label">
+          <input type="checkbox" id="modal-source-refresh">
+          Auto-refresh (check every 5 min if stream is live)
+        </label>
       </div>
       <input type="hidden" id="modal-source-type" value="youtube">
       <div class="modal-actions">

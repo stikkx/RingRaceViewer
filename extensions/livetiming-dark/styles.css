@@ -1,0 +1,326 @@
+/* LiveTiming Extension Styles with Tailwind CSS Integration */
+
+/* Animation keyframes for notifications */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #16a34a;
+}
+
+/* Range slider customization */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+    background: #444444;
+    height: 6px;
+    border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #22c55e;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #16a34a;
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-track {
+    background: #444444;
+    height: 6px;
+    border-radius: 3px;
+    border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+    background: #22c55e;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    background: #16a34a;
+    transform: scale(1.1);
+}
+
+/* Checkbox customization */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #444444;
+    border-radius: 3px;
+    background: #2d2d2d;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background: #22c55e;
+    border-color: #22c55e;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+input[type="checkbox"]:hover {
+    border-color: #22c55e;
+    transform: scale(1.05);
+}
+
+/* Theme transition effects */
+.livetiming-dark-theme {
+    transition: all 0.3s ease;
+}
+
+.livetiming-dark-theme * {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Enhanced fastest sector and lap highlighting */
+.livetiming-dark-theme .fastest-sector {
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.3) !important;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3) !important;
+}
+
+.livetiming-dark-theme .fastest-lap {
+    background: linear-gradient(135deg, #ec4899, #be185d) !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 2px 4px rgba(236, 72, 153, 0.3) !important;
+}
+
+/* Status indicator enhancements */
+.livetiming-dark-theme .sector-status-0,
+.livetiming-dark-theme .fastest-lap-status-0 {
+    color: #e5e7eb !important;
+    transition: color 0.2s ease;
+}
+
+.livetiming-dark-theme .sector-status-1,
+.livetiming-dark-theme .fastest-lap-status-1 {
+    color: #22c55e !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 4px rgba(34, 197, 94, 0.3) !important;
+}
+
+.livetiming-dark-theme .sector-status-2,
+.livetiming-dark-theme .fastest-lap-status-2 {
+    color: #f59e0b !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 4px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Table enhancements */
+.livetiming-dark-theme table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.livetiming-dark-theme th,
+.livetiming-dark-theme td {
+    padding: 8px 12px !important;
+    text-align: left !important;
+    border: 1px solid #444444 !important;
+    transition: all 0.2s ease !important;
+}
+
+.livetiming-dark-theme th {
+    background: linear-gradient(135deg, #1e3a8a, #1e40af) !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+.livetiming-dark-theme tr:hover {
+    background-color: #3d3d3d !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .livetiming-dark-theme table {
+        font-size: 12px !important;
+    }
+    
+    .livetiming-dark-theme th,
+    .livetiming-dark-theme td {
+        padding: 4px 6px !important;
+    }
+    
+    .livetiming-dark-theme .fastest-sector,
+    .livetiming-dark-theme .fastest-lap {
+        font-size: 11px !important;
+    }
+}
+
+/* Loading indicator */
+.livetiming-loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 10002;
+    font-family: Arial, sans-serif;
+    backdrop-filter: blur(4px);
+}
+
+/* Notification enhancements */
+.livetiming-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    max-width: 300px;
+    animation: slideIn 0.3s ease-out;
+    backdrop-filter: blur(4px);
+}
+
+/* Settings panel styles */
+.livetiming-settings-panel {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    background: #2d2d2d;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    font-family: Arial, sans-serif;
+    min-width: 200px;
+    display: none;
+    backdrop-filter: blur(4px);
+}
+
+.livetiming-settings-panel.show {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.livetiming-settings-panel h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #22c55e;
+}
+
+.livetiming-settings-panel label {
+    display: block;
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.livetiming-settings-panel input[type="range"] {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.livetiming-settings-panel input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.livetiming-settings-panel .setting-value {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-left: 10px;
+}
+
+/* Print styles */
+@media print {
+    .livetiming-dark-theme {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .livetiming-dark-theme table,
+    .livetiming-dark-theme tr,
+    .livetiming-dark-theme td,
+    .livetiming-dark-theme th {
+        background: white !important;
+        color: black !important;
+        border-color: #ccc !important;
+    }
+    
+    .livetiming-dark-theme .fastest-sector,
+    .livetiming-dark-theme .fastest-lap {
+        background: #f0f0f0 !important;
+        color: black !important;
+    }
+} 

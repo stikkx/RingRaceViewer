@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=RingRaceViewer
+Description=Boot splash for RingRaceViewer dashboard
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/ringraceviewer
+ScriptFile=/usr/share/plymouth/themes/ringraceviewer/ringraceviewer.script
