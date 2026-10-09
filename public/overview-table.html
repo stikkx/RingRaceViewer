@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classification — RingRaceViewer</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .table-header .title {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .table-header .title span { color: var(--primary); }
+
+    .table-header .race-info {
+      font-size: .8rem;
+      color: var(--text-dim);
+    }
+
+    .flag-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .flag-indicator.green { background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.3); }
+    .flag-indicator.yellow, .flag-indicator.code60 { background: rgba(250,204,21,.15); color: #facc15; border: 1px solid rgba(250,204,21,.3); animation: pulse 1.5s infinite; }
+    .flag-indicator.red { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid rgba(239,68,68,.3); animation: pulse 1s infinite; }
+    .flag-indicator.safety { background: rgba(251,146,60,.15); color: #fb923c; border: 1px solid rgba(251,146,60,.3); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .car-count {
+      font-size: .75rem;
+      color: var(--text-dim);
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 16px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .filter-input {
+      padding: 5px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: .78rem;
+      width: 200px;
+      outline: none;
+    }
+    .filter-input:focus { border-color: var(--primary); }
+
+    .filter-select {
+      padding: 5px 26px 5px 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: .78rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .table-wrapper {
+      flex: 1;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    thead { position: sticky; top: 0; z-index: 10; }
+
+    th {
+      padding: 7px 10px;
+      background: var(--surface-2);
+      border-bottom: 2px solid var(--border);
+      text-align: left;
+      font-weight: 600;
+      font-size: .75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      user-select: none;
+    }
+
+    th.sortable { cursor: pointer; }
+    th.sortable:hover { color: var(--text); }
+    th.sort-asc::after { content: ' \25B2'; font-size: .6rem; }
+    th.sort-desc::after { content: ' \25BC'; font-size: .6rem; }
+
+    td {
+      padding: 5px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: var(--surface-2); }
+
+    .col-pos { width: 40px; text-align: center; font-weight: 700; }
+    .col-chg { width: 30px; text-align: center; }
+    .col-stnr { width: 36px; text-align: center; font-weight: 600; }
+    .col-driver { min-width: 110px; font-weight: 600; }
+    .col-team { min-width: 130px; }
+    .col-car { min-width: 130px; color: var(--text-dim); }
+    .col-class { width: 65px; }
+    .col-cat { width: 50px; }
+    .col-laps { width: 40px; text-align: center; }
+    .col-gap, .col-int, .col-last, .col-best { width: 85px; font-family: 'JetBrains Mono','Fira Code',monospace; font-size: .75rem; }
+    .col-pits { width: 36px; text-align: center; }
+    .col-sector { width: 45px; text-align: center; }
+
+    .chg-up { color: #22c55e; font-weight: 600; }
+    .chg-down { color: #ef4444; font-weight: 600; }
+    .chg-same { color: var(--text-dim); }
+    .time-best { color: #a855f7; font-weight: 700; }
+    .time-pb { color: #22c55e; font-weight: 600; }
+    .cat-pro { color: #60a5fa; }
+    .cat-proam { color: #facc15; }
+    .cat-am { color: #fb923c; }
+
+    .class-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .sector-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 3px;
+      vertical-align: middle;
+    }
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="table-header">
+    <span class="title">Ring<span>Race</span>Viewer</span>
+    <span class="race-info" id="race-info"></span>
+    <div class="header-right">
+      <span class="car-count" id="car-count"></span>
+      <div class="flag-indicator green" id="flag-indicator">
+        <span id="flag-icon">&#9873;</span>
+        <span id="flag-text">Green</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" id="filter-search" class="filter-input" placeholder="Search driver, team, car, #...">
+    <select id="filter-class" class="filter-select"><option value="">All Classes</option></select>
+    <select id="filter-pro" class="filter-select">
+      <option value="">All Categories</option>
+      <option value="PRO">PRO</option>
+      <option value="PROAM">PRO-AM</option>
+      <option value="AM">AM</option>
+    </select>
+    <select id="filter-sector" class="filter-select"><option value="">All Sectors</option></select>
+  </div>
+
+  <div class="table-wrapper" id="table-wrapper">
+    <div class="empty-state" id="empty-state">Waiting for timing data...</div>
+    <table style="display:none" id="results-table">
+      <thead>
+        <tr>
+          <th class="col-pos sortable" data-sort="pos">Pos</th>
+          <th class="col-chg">+/-</th>
+          <th class="col-stnr sortable" data-sort="stnr">#</th>
+          <th class="col-driver sortable" data-sort="name">Driver</th>
+          <th class="col-team">Team</th>
+          <th class="col-car">Car</th>
+          <th class="col-class sortable" data-sort="className">Class</th>
+          <th class="col-cat">Cat</th>
+          <th class="col-laps sortable" data-sort="laps">Laps</th>
+          <th class="col-gap">Gap</th>
+          <th class="col-int">Int</th>
+          <th class="col-last sortable" data-sort="lastLap">Last Lap</th>
+          <th class="col-best sortable" data-sort="fastestLap">Best Lap</th>
+          <th class="col-pits sortable" data-sort="pits">Pits</th>
+          <th class="col-sector">Sector</th>
+        </tr>
+      </thead>
+      <tbody id="results-body"></tbody>
+    </table>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/overview-shared.js"></script>
+  <script>
+    (function() {
+      const socket = io();
+      const shared = RRVOverview(socket);
+      const $raceInfo = document.getElementById('race-info');
+      const $carCount = document.getElementById('car-count');
+      const $empty = document.getElementById('empty-state');
+      const $table = document.getElementById('results-table');
+      const $tbody = document.getElementById('results-body');
+
+      // Filters
+      const $search = document.getElementById('filter-search');
+      const $class = document.getElementById('filter-class');
+      const $pro = document.getElementById('filter-pro');
+      const $sector = document.getElementById('filter-sector');
+
+      // Sort state
+      let sortField = 'pos', sortDir = 'asc';
+
+      function getFiltered() {
+        const search = $search.value.toLowerCase().trim();
+        const cls = $class.value;
+        const pro = $pro.value;
+        const sector = $sector.value;
+        return shared.allResults.filter(r => {
+          if (search && !`${r.stnr} ${r.name} ${r.team} ${r.car}`.toLowerCase().includes(search)) return false;
+          if (cls && r.className !== cls) return false;
+          if (pro && r.pro !== pro) return false;
+          if (sector === 'PIT' && r.currentSector !== 0) return false;
+          else if (sector && sector !== 'PIT' && String(r.currentSector) !== sector) return false;
+          return true;
+        });
+      }
+
+      function renderTable() {
+        const filtered = getFiltered();
+        const sorted = shared.sortResults(filtered, sortField, sortDir);
+        $tbody.innerHTML = '';
+        sorted.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = shared.buildRowHTML(r);
+          $tbody.appendChild(tr);
+        });
+        $carCount.textContent = `${filtered.length}/${shared.allResults.length} cars`;
+      }
+
+      function updateFilterOptions() {
+        const classes = [...new Set(shared.allResults.map(r => r.className).filter(Boolean))].sort();
+        const cur = $class.value;
+        $class.innerHTML = '<option value="">All Classes</option>';
+        classes.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c; o.textContent = c;
+          if (c === cur) o.selected = true;
+          $class.appendChild(o);
+        });
+        const curS = $sector.value;
+        $sector.innerHTML = '<option value="">All Sectors</option><option value="PIT">Pit Lane</option>';
+        for (let i = 1; i <= 9; i++) {
+          const o = document.createElement('option');
+          o.value = String(i); o.textContent = `Sector ${i}`;
+          if (String(i) === curS) o.selected = true;
+          $sector.appendChild(o);
+        }
+      }
+
+      // Sort headers
+      document.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+          const f = th.dataset.sort;
+          if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+          else { sortField = f; sortDir = 'asc'; }
+          document.querySelectorAll('th').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+          th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+          renderTable();
+        });
+      });
+      document.querySelector('th[data-sort="pos"]').classList.add('sort-asc');
+
+      // Filter events
+      [$search, $class, $pro, $sector].forEach(el => {
+        el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', renderTable);
+      });
+
+      socket.on('timing:full', (data) => {
+        shared.handleTimingData(data);
+        $raceInfo.textContent = [data.cup, data.heat].filter(Boolean).join(' — ');
+        shared.updateFlag(data.flag);
+        $empty.style.display = 'none';
+        $table.style.display = '';
+        updateFilterOptions();
+        renderTable();
+      });
+
+      shared.initTheme();
+    })();
+  </script>
+</body>
+</html>

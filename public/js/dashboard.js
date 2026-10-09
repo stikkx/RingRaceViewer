@@ -233,6 +233,7 @@
 
       sources = await srcRes.json();
       const { layouts, activeLayoutId } = await layoutRes.json();
+      layoutList = layouts;
       const theme = await themeRes.json();
       const allDisplays = await dispRes.json();
       const audData = await audRes.json();
@@ -388,6 +389,33 @@
       }
     });
   }, REFRESH_INTERVAL);
+
+  // --- Keyboard Layout Switching (1-9) ---
+
+  let layoutList = [];
+
+  socket.on('layouts:changed', data => {
+    layoutList = data.layouts || [];
+  });
+
+  document.addEventListener('keydown', (e) => {
+    // Number keys 1-9 (not numpad, not with modifiers)
+    if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= 9 && layoutList.length >= num) {
+      const layout = layoutList[num - 1];
+      if (layout) {
+        e.preventDefault();
+        fetch(`/api/layouts/${layout.id}/activate`, { method: 'POST' })
+          .then(r => r.json())
+          .then(activated => {
+            console.log(`Layout switched: ${activated.name} (key ${num})`);
+            showMessagePopup(`Layout: ${activated.name}`, 3);
+          })
+          .catch(err => console.error('Layout switch failed:', err));
+      }
+    }
+  });
 
   // --- Init ---
 

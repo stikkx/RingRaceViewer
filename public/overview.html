@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RingRaceViewer Overview</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/overview.css">
+</head>
+<body class="overview-body">
+
+  <!-- Header -->
+  <header class="overview-header">
+    <div class="header-left">
+      <h1>Ring<span>Race</span>Viewer</h1>
+      <span class="header-separator">|</span>
+      <span class="header-subtitle" id="race-info">Race Overview</span>
+    </div>
+    <div class="header-right">
+      <div class="flag-indicator" id="flag-indicator" title="Track Status">
+        <span class="flag-icon" id="flag-icon">&#9873;</span>
+        <span class="flag-text" id="flag-text">Green</span>
+      </div>
+      <div class="status-dot" id="status-dot" title="Waiting for data"></div>
+      <span class="car-count" id="car-count">0 cars</span>
+    </div>
+  </header>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <input type="text" id="filter-search" class="filter-input" placeholder="Search driver, team, car, #number...">
+    </div>
+    <div class="filter-group">
+      <select id="filter-class" class="filter-select">
+        <option value="">All Classes</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <select id="filter-pro" class="filter-select">
+        <option value="">All Categories</option>
+        <option value="PRO">PRO</option>
+        <option value="PROAM">PRO-AM</option>
+        <option value="AM">AM</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <select id="filter-sector" class="filter-select">
+        <option value="">All Sectors</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="toggle-label filter-toggle">
+        <input type="checkbox" id="filter-pits"> In Pits Only
+      </label>
+    </div>
+    <div class="filter-group">
+      <button class="btn btn-sm" id="btn-clear-filters">Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="overview-content">
+
+    <!-- Track Map (full width, big) -->
+    <div class="track-map-section">
+      <div class="track-map-header">
+        <span class="track-title">Track Map</span>
+        <span class="track-length" id="track-length"></span>
+        <div class="track-legend" id="track-legend"></div>
+      </div>
+      <div class="track-map-container" id="track-map-container">
+        <!-- SVG injected by JS -->
+      </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="table-panel">
+      <div class="panel-header">
+        <span>Live Classification</span>
+        <span class="update-time" id="update-time"></span>
+      </div>
+      <div class="table-wrapper">
+        <table class="results-table" id="results-table">
+          <thead>
+            <tr>
+              <th class="col-pos sortable" data-sort="pos">Pos</th>
+              <th class="col-chg">+/-</th>
+              <th class="col-stnr sortable" data-sort="stnr">#</th>
+              <th class="col-driver sortable" data-sort="name">Driver</th>
+              <th class="col-team">Team</th>
+              <th class="col-car">Car</th>
+              <th class="col-class sortable" data-sort="className">Class</th>
+              <th class="col-cat">Cat</th>
+              <th class="col-laps sortable" data-sort="laps">Laps</th>
+              <th class="col-gap">Gap</th>
+              <th class="col-int">Int</th>
+              <th class="col-last sortable" data-sort="lastLap">Last Lap</th>
+              <th class="col-best sortable" data-sort="fastestLap">Best Lap</th>
+              <th class="col-pits sortable" data-sort="pits">Pits</th>
+              <th class="col-sector">Sector</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="overview-empty" id="overview-empty">
+    <div class="empty-icon">&#9201;</div>
+    <div class="empty-text">Waiting for live timing data...</div>
+    <div class="empty-hint">Connect to a timing source via the <a href="/admin">Admin Panel</a> or press the Test button.</div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/overview-shared.js"></script>
+  <script src="/js/overview.js"></script>
+</body>
+</html>

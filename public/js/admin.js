@@ -581,9 +581,6 @@
     sources.forEach(src => {
       const card = document.createElement('div');
       card.className = 'source-card';
-      const targetBtns = displayNums.map(n =>
-        `<button class="btn btn-sm btn-add-to" data-source="${src.id}" data-target="${n}" title="Add to Display ${n}">D${n}</button>`
-      ).join('');
 
       const isAudio = audioSourceId === src.id;
       const audioBtn = src.type === 'youtube'
@@ -602,18 +599,16 @@
         </div>
         <div class="actions">
           ${audioBtn}
-          ${targetBtns}
+          <button class="btn btn-sm btn-add-to" data-source="${src.id}" title="Add to Display ${selectedDisplay}">&#10010;</button>
           <button class="btn btn-sm btn-icon" data-edit="${src.id}" title="Edit">&#9998;</button>
           <button class="btn btn-sm btn-icon" data-delete="${src.id}" title="Delete">&#128465;</button>
         </div>
       `;
 
-      card.querySelectorAll('.btn-add-to').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const s = sources.find(x => x.id === btn.dataset.source);
-          if (s) addWidgetToGrid(s, btn.dataset.target);
-        });
+      card.querySelector('.btn-add-to').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const s = sources.find(x => x.id === src.id);
+        if (s) addWidgetToGrid(s, selectedDisplay);
       });
       const audioBtnEl = card.querySelector('[data-audio]');
       if (audioBtnEl) {
@@ -731,6 +726,18 @@
 
   $('#btn-add-youtube').addEventListener('click', () => { $('#modal-source-type').value = 'youtube'; openSourceModal(); });
   $('#btn-add-webpage').addEventListener('click', () => { $('#modal-source-type').value = 'webpage'; openSourceModal(); });
+
+  // Quick-add built-in overview pages
+  async function addBuiltinSource(title, path) {
+    // Check if already exists
+    const existing = sources.find(s => s.url && s.url.includes(path));
+    if (existing) { toast(`"${existing.title}" already exists`, 'error'); return; }
+    const url = `${location.origin}${path}`;
+    await fetch('/api/sources', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'webpage', title, url }) });
+    toast(`"${title}" added`, 'success');
+  }
+  $('#btn-add-trackmap').addEventListener('click', () => addBuiltinSource('Track Map', '/overview/track'));
+  $('#btn-add-classification').addEventListener('click', () => addBuiltinSource('Classification', '/overview/table'));
   $('#btn-modal-cancel').addEventListener('click', closeSourceModal);
   $('#btn-modal-save').addEventListener('click', saveSource);
   $('#btn-save').addEventListener('click', saveLayout);

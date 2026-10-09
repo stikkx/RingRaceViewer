@@ -67,6 +67,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Short URL redirects
 app.get('/admin', (_req, res) => res.redirect('/admin.html'));
+app.get('/overview', (_req, res) => res.redirect('/overview.html'));
+app.get('/overview/track', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'overview-track.html')));
+app.get('/overview/table', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'overview-table.html')));
 
 // --- API: Sources ---
 

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 650" class="track-svg">
+  <defs>
+    <style>
+      .track-road { fill: none; stroke: var(--surface-3, #2a2a3c); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .track-road-gp { fill: none; stroke: var(--surface-3, #2a2a3c); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .track-label { font-family: sans-serif; font-size: 8px; fill: var(--text-dim, #888); opacity: 0.5; }
+      .track-label-bold { font-family: sans-serif; font-size: 12px; font-weight: bold; fill: var(--text-dim, #888); opacity: 0.35; }
+      .sector-marker { fill: var(--primary, #e10600); opacity: 0.6; }
+      .sector-num { font-family: sans-serif; font-size: 11px; font-weight: 700; fill: var(--text, #e0e0e0); text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+
+  <!-- Nordschleife + GP combined circuit (from Wikipedia SVG) -->
+  <path class="track-road" d="M 279.14 414.64 C 275.89 409.71 276.70 408.48 273.11 408.25 C 271.45 408.14 269.39 408.27 267.13 412.32 C 265.89 414.56 264.61 416.30 262.74 417.96 C 259.05 421.24 255.14 423.96 250.32 423.95 C 245.31 423.94 243.68 421.40 237.76 419.52 C 233.70 418.23 226.58 417.92 224.32 418.99 C 222.50 419.85 222.79 419.98 221.35 420.16 C 219.51 420.39 217.80 419.35 216.45 417.91 C 214.36 415.68 213.48 414.08 211.46 411.43 C 209.98 409.50 207.55 408.29 206.24 406.03 C 205.36 404.52 205.70 403.71 203.68 402.16 C 202.25 401.07 196.07 401.17 191.94 399.74 C 188.74 398.62 189.02 394.37 186.90 391.10 C 184.80 387.87 174.05 381.50 167.92 376.35 C 160.63 368.70 160.32 367.93 157.39 364.65 C 154.46 361.37 151.91 358.83 149.56 355.56 C 147.95 353.32 146.42 349.99 146.87 346.12 C 147.86 337.58 152.71 330.74 152.80 321.02 C 152.86 314.36 153.34 311.30 151.81 300.33 C 151.20 295.90 149.69 292.88 148.04 288.72 C 144.23 279.16 139.92 269.73 134.90 260.48 C 133.02 257.01 130.29 254.31 127.16 252.47 C 123.66 250.40 119.39 248.68 115.47 246.71 C 113.49 245.72 112.57 243.45 112.95 241.50 C 113.71 237.60 119.23 237.33 125.73 234.30 C 133.61 230.62 137.11 228.49 141.56 224.58 C 147.07 219.74 151.99 216.40 157.39 211.18 C 161.15 207.54 164.39 205.25 167.38 199.30 C 169.06 195.96 170.23 193.20 171.15 189.32 C 172.50 183.65 171.28 178.69 172.14 175.64 C 173.18 172.00 177.32 171.36 177.90 168.63 C 178.44 166.11 175.40 163.13 176.82 159.45 C 177.69 157.19 183.46 154.21 187.62 150.55 C 190.94 147.62 190.50 146.92 193.73 143.44 C 199.93 136.78 200.37 137.76 207.05 130.22 C 209.84 127.07 211.81 124.21 212.63 120.23 C 213.68 115.06 211.28 110.42 209.48 106.29 C 208.89 104.94 207.86 104.13 206.15 103.50 C 204.71 102.97 202.40 103.67 200.84 103.05 C 198.14 101.97 196.53 101.15 194.00 99.18 C 190.90 96.75 189.56 94.59 189.42 92.70 C 189.24 90.36 190.64 89.53 192.39 88.74 C 196.24 87.02 201.85 83.86 205.79 79.84 C 208.01 77.57 206.90 74.70 208.13 71.65 C 208.82 69.93 210.34 67.12 212.36 65.17 C 215.24 62.39 219.35 60.93 224.32 63.20 C 229.45 65.53 233.68 68.14 238.62 72.73 C 239.98 73.99 239.49 77.97 242.31 77.86 C 246.06 77.71 244.15 75.26 248.07 73.36 C 254.25 70.37 262.63 70.05 268.85 71.65 C 271.76 72.37 275.16 74.09 278.12 73.63 C 281.96 73.03 283.37 69.82 283.69 68.32 C 284.44 64.90 283.58 59.90 285.49 57.44 C 287.45 54.92 288.42 53.58 300.70 49.61 C 312.35 45.85 316.54 48.00 322.56 45.65 C 329.44 42.97 334.93 34.34 340.28 34.68 C 343.10 34.86 345.78 36.34 346.31 39.63 C 347.25 45.55 345.81 51.40 345.77 56.81 C 345.68 68.95 349.19 75.76 351.61 78.40 C 356.40 83.61 361.51 86.72 367.36 89.46 C 371.77 91.53 375.27 93.52 381.39 93.60 C 392.95 93.75 401.72 93.69 410.54 95.67 C 416.23 96.95 422.09 98.41 426.91 101.70 C 430.60 104.22 432.62 106.61 436.18 108.80 C 442.74 112.85 447.48 114.73 452.91 113.93 C 457.19 113.31 463.25 109.32 467.84 105.48 C 471.71 102.24 475.26 97.29 480.26 96.21 C 487.72 94.59 491.40 95.55 496.36 93.51 C 500.75 91.71 502.98 91.67 504.19 92.79 C 507.29 95.66 505.00 98.90 502.84 100.53 C 497.80 104.31 489.28 111.17 486.82 111.77 C 480.90 113.23 482.03 118.20 483.35 119.51 C 486.43 122.55 491.06 120.36 491.66 118.13 C 492.10 116.47 493.37 115.43 495.89 113.63 C 498.77 111.58 501.77 109.98 507.22 108.06 C 509.59 107.22 511.18 106.37 517.57 105.63 C 522.18 105.09 526.88 99.09 530.61 93.74 C 535.41 86.86 530.89 85.69 531.98 81.73 C 532.89 78.43 533.77 75.02 538.01 72.10 C 541.69 69.57 561.05 76.08 562.48 76.96 C 565.91 79.08 567.57 83.13 570.76 84.61 C 574.44 86.31 575.95 86.34 579.03 87.75 C 581.19 88.74 587.95 98.44 588.03 101.07 C 588.17 105.40 580.70 117.25 585.15 121.13 C 589.09 124.56 590.25 123.59 594.69 125.81 C 597.74 127.33 597.74 132.29 597.92 135.70 C 598.10 139.03 598.02 143.44 595.32 144.88 C 589.92 147.76 582.61 143.35 576.51 145.06 C 573.27 145.97 574.36 150.19 570.31 155.31 C 565.60 161.27 563.38 167.90 563.38 171.60 C 563.38 177.09 563.92 184.10 563.47 189.05 C 563.23 191.71 561.72 194.69 559.33 195.89 C 555.37 197.86 551.64 197.51 548.36 199.84 C 544.85 202.33 542.78 205.09 539.54 208.66 C 536.39 212.13 535.85 214.21 533.87 218.47 C 532.16 222.15 530.72 223.68 528.75 226.02 C 526.99 228.10 524.26 229.10 522.00 230.61 C 519.84 232.05 517.89 234.43 514.26 235.38 C 504.44 237.96 495.15 242.18 485.74 242.84 C 479.55 243.29 477.47 235.56 471.35 235.65 C 468.79 235.69 466.35 237.07 464.15 238.62 C 460.43 241.25 456.67 243.04 456.96 246.17 C 457.86 256.16 476.48 255.53 481.43 263.27 C 483.04 265.80 485.43 269.40 485.02 275.50 C 484.80 278.83 482.11 281.59 479.63 283.60 C 473.83 288.27 453.54 299.79 440.22 307.80 L 374.55 348.55 C 362.50 356.10 343.37 367.41 338.21 371.31 C 325.80 380.68 315.09 398.36 312.27 402.39 C 310.51 404.89 304.55 409.11 303.89 411.02 C 303.12 413.24 303.35 417.45 301.14 419.02 C 298.47 420.92 297.07 420.16 294.33 420.20 C 291.97 420.24 292.62 420.78 290.08 421.33 C 288.05 421.76 284.14 421.51 280.64 416.64 Z"/>
+
+  <!-- GP section (Mercedes Arena, Schumacher-S, etc.) -->
+  <path class="track-road-gp" d="M 269.88 425.38 C 271.79 424.79 277.79 426.55 274.88 429.62 C 266.04 438.96 256.65 448.10 247.81 457.44 L 240.94 467.81"/>
+  <path class="track-road-gp" d="M 246.69 465.10 C 236.15 473.02 234.32 475.37 232.44 473.73 C 230.66 472.19 232.06 470.44 233.06 468.35 C 234.09 466.21 236.27 464.98 236.94 462.35 C 237.36 460.68 235.63 458.57 234.06 457.85 C 230.69 456.31 226.19 458.20 223.06 459.10 C 219.90 460.02 217.22 461.64 217.44 464.10 C 217.71 467.11 219.65 468.15 221.81 468.23 C 222.82 468.27 224.40 468.60 224.98 470.15 C 225.51 471.56 226.20 473.48 223.81 480.90 M 203.19 466.48"/>
+  <path class="track-road-gp" d="M 207.38 506.56 C 207.99 504.02 209.11 502.77 211.42 503.06 C 214.12 503.41 213.90 511.77 219.06 507.31"/>
+  <path class="track-road-gp" d="M 212.12 490.31 C 211.52 493.65 212.74 494.89 214.87 495.69 C 217.37 496.62 219.66 494.65 220.38 492.44"/>
+
+  <!-- Location labels (subtle) -->
+  <text class="track-label" x="225" y="400">Hatzenbach</text>
+  <text class="track-label" x="105" y="345">Flugplatz</text>
+  <text class="track-label" x="148" y="262">Schwedenkreuz</text>
+  <text class="track-label" x="70" y="240">Aremberg</text>
+  <text class="track-label" x="107" y="180">Adenauer Forst</text>
+  <text class="track-label" x="157" y="130">Metzgesfeld</text>
+  <text class="track-label" x="148" y="92">Kallenhard</text>
+  <text class="track-label" x="220" y="88">Wehrseifen</text>
+  <text class="track-label" x="250" y="64">Exmühle</text>
+  <text class="track-label" x="355" y="40">Bergwerk</text>
+  <text class="track-label" x="382" y="84">Kesselchen</text>
+  <text class="track-label" x="447" y="90">Klostertal</text>
+  <text class="track-label" x="510" y="62">Hohe Acht</text>
+  <text class="track-label" x="570" y="70">Hedwigshöhe</text>
+  <text class="track-label" x="594" y="92">Wippermann</text>
+  <text class="track-label" x="542" y="117">Eschbach</text>
+  <text class="track-label" x="608" y="137">Brünnchen</text>
+  <text class="track-label" x="510" y="173">Pflanzgarten</text>
+  <text class="track-label" x="535" y="240">Stefan-Bellof-S</text>
+  <text class="track-label" x="400" y="225">Schwalbenschwanz</text>
+  <text class="track-label" x="450" y="317">Döttinger Höhe</text>
+  <text class="track-label" x="498" y="277">Galgenkopf</text>
+  <text class="track-label" x="335" y="393">Tiergarten</text>
+  <text class="track-label" x="315" y="418">Hohenrain</text>
+  <text class="track-label-bold" x="275" y="198">Nordschleife</text>
+  <text class="track-label-bold" x="220" y="545">Grand-Prix-Strecke</text>
+
+  <!-- Sector markers — positioned along the track for the 24h race (9 sectors) -->
+  <!-- These are <g> groups so JS can find them by ID -->
+  <g id="sector-0" transform="translate(275, 425)"><circle class="sector-marker" r="8"/><text class="sector-num" dy="0.5">S/F</text></g>
+  <g id="sector-1" transform="translate(230, 415)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">1</text></g>
+  <g id="sector-2" transform="translate(155, 360)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">2</text></g>
+  <g id="sector-3" transform="translate(135, 260)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">3</text></g>
+  <g id="sector-4" transform="translate(175, 168)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">4</text></g>
+  <g id="sector-5" transform="translate(210, 100)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">5</text></g>
+  <g id="sector-6" transform="translate(345, 55)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">6</text></g>
+  <g id="sector-7" transform="translate(535, 80)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">7</text></g>
+  <g id="sector-8" transform="translate(570, 155)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">8</text></g>
+  <g id="sector-9" transform="translate(460, 280)"><circle class="sector-marker" r="7"/><text class="sector-num" dy="0.5">9</text></g>
+
+  <!-- Car dots group — JS will populate this -->
+  <g id="cars-group"></g>
+</svg>

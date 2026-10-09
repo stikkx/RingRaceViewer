@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Map — RingRaceViewer</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .track-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .track-header .title {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    .track-header .title span { color: var(--primary); }
+
+    .track-header .race-info {
+      font-size: .8rem;
+      color: var(--text-dim);
+    }
+
+    .flag-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      font-size: .75rem;
+      font-weight: 600;
+      margin-left: auto;
+    }
+    .flag-indicator.green { background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.3); }
+    .flag-indicator.yellow, .flag-indicator.code60 { background: rgba(250,204,21,.15); color: #facc15; border: 1px solid rgba(250,204,21,.3); animation: pulse 1.5s infinite; }
+    .flag-indicator.red { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid rgba(239,68,68,.3); animation: pulse 1s infinite; }
+    .flag-indicator.safety { background: rgba(251,146,60,.15); color: #fb923c; border: 1px solid rgba(251,146,60,.3); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: .72rem;
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-label { color: var(--text-dim); }
+
+    .track-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      min-height: 0;
+      position: relative;
+    }
+
+    .track-container svg { width: 100%; height: 100%; }
+
+    .car-dot { stroke: #000; stroke-width: 1.5; cursor: pointer; transition: all .5s ease; }
+    .car-dot:hover { stroke-width: 2.5; }
+    .car-dot-label { font-weight: 800; fill: #fff; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+    .car-pos-label { font-size: 8px; font-weight: 700; fill: var(--text-dim); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+
+    .car-tooltip {
+      position: absolute;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: .82rem;
+      box-shadow: var(--shadow);
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .car-tooltip.visible { opacity: 1; }
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="track-header">
+    <span class="title">Ring<span>Race</span>Viewer</span>
+    <span class="race-info" id="race-info"></span>
+    <div class="legend" id="legend"></div>
+    <div class="flag-indicator green" id="flag-indicator">
+      <span id="flag-icon">&#9873;</span>
+      <span id="flag-text">Green</span>
+    </div>
+  </div>
+
+  <div class="track-container" id="track-container">
+    <div class="empty-state" id="empty-state">Waiting for timing data...</div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/overview-shared.js"></script>
+  <script>
+    (function() {
+      const socket = io();
+      const shared = RRVOverview(socket);
+      const $container = document.getElementById('track-container');
+      const $empty = document.getElementById('empty-state');
+      const $raceInfo = document.getElementById('race-info');
+      const $legend = document.getElementById('legend');
+
+      // Load track SVG
+      fetch('/assets/track-nuerburgring.svg')
+        .then(r => r.text())
+        .then(svg => {
+          $empty.remove();
+          $container.innerHTML = svg;
+          const tooltip = document.createElement('div');
+          tooltip.className = 'car-tooltip';
+          tooltip.id = 'car-tooltip';
+          $container.appendChild(tooltip);
+        });
+
+      socket.on('timing:full', (data) => {
+        shared.handleTimingData(data);
+        $raceInfo.textContent = [data.cup, data.heat].filter(Boolean).join(' — ');
+        shared.updateFlag(data.flag);
+        shared.renderTrackDots(shared.allResults, $container);
+        shared.renderLegend($legend);
+      });
+
+      shared.initTheme();
+    })();
+  </script>
+</body>
+</html>

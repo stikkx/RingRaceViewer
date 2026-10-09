@@ -1,0 +1,535 @@
+/* ===== RingRaceViewer — Overview Page ===== */
+
+.overview-body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== Header ===== */
+
+.overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.overview-header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.overview-header h1 span {
+  color: var(--primary);
+}
+
+.header-separator {
+  color: var(--border);
+  font-weight: 300;
+}
+
+.header-subtitle {
+  font-size: .85rem;
+  color: var(--text-dim);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.car-count {
+  font-size: .8rem;
+  color: var(--text-dim);
+}
+
+/* ===== Flag Indicator ===== */
+
+.flag-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  font-size: .8rem;
+  font-weight: 600;
+  transition: all .3s;
+}
+
+.flag-indicator.green {
+  background: rgba(34, 197, 94, .15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, .3);
+}
+
+.flag-indicator.yellow, .flag-indicator.code60 {
+  background: rgba(250, 204, 21, .15);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, .3);
+  animation: flag-pulse 1.5s infinite;
+}
+
+.flag-indicator.red {
+  background: rgba(239, 68, 68, .15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, .3);
+  animation: flag-pulse 1s infinite;
+}
+
+.flag-indicator.safety {
+  background: rgba(251, 146, 60, .15);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, .3);
+  animation: flag-pulse 1.5s infinite;
+}
+
+.flag-indicator.hidden {
+  display: none;
+}
+
+@keyframes flag-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+/* ===== Filter Bar ===== */
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+}
+
+.filter-input {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: .82rem;
+  width: 260px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.filter-input:focus {
+  border-color: var(--primary);
+}
+
+.filter-select {
+  padding: 6px 30px 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: .82rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: var(--primary);
+}
+
+.filter-toggle {
+  font-size: .82rem;
+  gap: 6px;
+}
+
+/* ===== Content Layout (stacked: track on top, table below) ===== */
+
+.overview-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.overview-content.hidden {
+  display: none;
+}
+
+/* ===== Track Map Section (full width, big) ===== */
+
+.track-map-section {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 50vh;
+  min-height: 300px;
+  max-height: 600px;
+}
+
+.track-map-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 20px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.track-title {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.track-length {
+  font-size: .75rem;
+  color: var(--text-dim);
+}
+
+.track-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: .72rem;
+  margin-left: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.track-map-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  min-height: 0;
+  position: relative;
+}
+
+.track-map-container svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== Panel Header ===== */
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  flex-shrink: 0;
+}
+
+/* ===== Results Table Panel ===== */
+
+.table-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.update-time {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: .72rem;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+
+.results-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.results-table th {
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-bottom: 2px solid var(--border);
+  text-align: left;
+  font-weight: 600;
+  font-size: .75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  user-select: none;
+}
+
+.results-table th.sortable {
+  cursor: pointer;
+  transition: color .15s;
+}
+
+.results-table th.sortable:hover {
+  color: var(--text);
+}
+
+.results-table th.sort-asc::after {
+  content: ' \25B2';
+  font-size: .6rem;
+}
+
+.results-table th.sort-desc::after {
+  content: ' \25BC';
+  font-size: .6rem;
+}
+
+.results-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  transition: background .3s;
+}
+
+.results-table tbody tr {
+  transition: background .15s;
+}
+
+.results-table tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.results-table tbody tr.highlight-update {
+  background: rgba(225, 6, 0, .08);
+}
+
+/* Position column */
+.col-pos { width: 45px; text-align: center; font-weight: 700; }
+.col-chg { width: 35px; text-align: center; }
+.col-stnr { width: 40px; text-align: center; font-weight: 600; }
+.col-driver { min-width: 120px; font-weight: 600; }
+.col-team { min-width: 140px; }
+.col-car { min-width: 140px; color: var(--text-dim); }
+.col-class { width: 70px; }
+.col-cat { width: 55px; }
+.col-laps { width: 45px; text-align: center; }
+.col-gap { width: 100px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .75rem; }
+.col-int { width: 90px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .75rem; }
+.col-last { width: 90px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .75rem; }
+.col-best { width: 90px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .75rem; }
+.col-pits { width: 40px; text-align: center; }
+.col-sector { width: 50px; text-align: center; }
+
+/* Position change badges */
+.chg-up { color: #22c55e; font-weight: 600; }
+.chg-down { color: #ef4444; font-weight: 600; }
+.chg-same { color: var(--text-dim); }
+
+/* Time status highlights */
+.time-best { color: #a855f7; font-weight: 700; }
+.time-pb { color: #22c55e; font-weight: 600; }
+
+/* Class color badges */
+.class-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: .72rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Category badges */
+.cat-pro { color: #60a5fa; }
+.cat-proam { color: #facc15; }
+.cat-am { color: #fb923c; }
+
+/* Sector indicator */
+.sector-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* ===== Empty State ===== */
+
+.overview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  color: var(--text-dim);
+}
+
+.overview-empty.hidden {
+  display: none;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  opacity: .4;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.empty-hint {
+  font-size: .85rem;
+  opacity: .7;
+}
+
+/* ===== Car Dots on Track ===== */
+
+.car-dot {
+  stroke: #000;
+  stroke-width: 1.5;
+  transition: all .5s ease;
+  cursor: pointer;
+}
+
+.car-dot:hover {
+  stroke-width: 2.5;
+}
+
+.car-dot-label {
+  font-size: 10px;
+  font-weight: 800;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  text-shadow: 0 0 3px #000;
+}
+
+/* Position label shown next to car dot */
+.car-pos-label {
+  font-size: 8px;
+  font-weight: 700;
+  fill: var(--text-dim);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.car-tooltip {
+  position: absolute;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .82rem;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  z-index: 200;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.car-tooltip.visible {
+  opacity: 1;
+}
+
+/* ===== Pit Indicator ===== */
+
+.pit-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(239, 68, 68, .2);
+  color: #ef4444;
+  border-radius: 3px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1100px) {
+  .track-map-section {
+    height: 40vh;
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 700px) {
+  .filter-bar {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .filter-input {
+    width: 160px;
+  }
+
+  .overview-header {
+    padding: 6px 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .track-map-section {
+    height: 35vh;
+    min-height: 200px;
+  }
+
+  .col-team, .col-car, .col-int {
+    display: none;
+  }
+}
